@@ -1,0 +1,244 @@
+---
+title: "Demo"
+author: "Sebastian Wójcik"
+date: "24-04-2023"
+output:
+html_document:
+  df_print: paged
+  keep_md: true
+  self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Mail do kontaktu: [s.wojcik\@stat.gov.pl](mailto:s.wojcik@stat.gov.pl){.email} Dużo szczegółów jest na stronie [rmarkdown](https://bookdown.org/yihui/rmarkdown/) bądź [rmarkdown2](https://bookdown.org/yihui/rmarkdown-cookbook/). Tutaj podaje podstawy pliku html.
+
+# Nagłówek 1
+
+## Nagłówek 2
+
+### Nagłówek 3
+
+#### Nagłówek 4
+
+Numerowanie / punktowanie (musi być linia przerwy przed punktowaniem)
+
+-   raz
+-   dwa
+-   trzy
+
+Listy zagnieżdżone tworzone przez \*, +, - (niższe poziomy muszą być poprzedzone wcięciem Tab)
+
+-   owoce
+    -   jabłko
+        -   Jonagold
+        -   Golden Delicious
+    -   śliwka
+    -   gruszka
+-   warzywa
+    -   marchewka
+    -   seler
+-   owoce
+    -   jabłko
+        -   Jonagold
+        -   Golden Delicious
+            -   śliwka
+    -   gruszka
+-   warzywa
+    -   marchewka
+    -   seler
+
+Kluczowe znaczenie ma wcięcie a nie typ znacznika
+
+-   owoce
+-   jabłko
+-   Jonagold
+-   Golden Delicious
+-   śliwka
+-   gruszka
+-   warzywa
+-   marchewka
+-   seler
+
+Więcj opcji w pakietach `fancy_list` czy `startnum`.
+
+# Formatowanie
+
+Linki [google](https://google.com)
+
+*kursywa*
+
+**pogrubienie**
+
+***kursywa i pogrubienie***
+
+*kursywa*
+
+**pogrubienie**
+
+<b><i>tekst</i></b>
+
+[kolor czerwony]{style="color: red;"}
+
+Linie poziome
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Kod R
+
+Fragmenty kodów są inicjowane i zamykane poprzez "\`\``". Fragment kodu składa się z określenia języka i opcji w pierwszej linijce. Po określeniu języka można nadać nazwę fragmentu, aby móc się do niego odwołać. Poniżej nazwano go`cars\`.
+
+Ładuje zbiory danych
+
+```{r cars, echo=TRUE, message = FALSE}
+summary(cars)
+srednie=colMeans(cars)
+srednie
+```
+
+Najważniejsze opcje kodu
+
+-   include = FALSE - czy pokazać kod i wyniki? Kod zawsze jest wykonywany
+-   eval = FALSE - czy wykonywać kod?
+-   echo = FALSE - czy pokazać kod?
+-   message = FALSE - czy pokazać wiadomości?
+-   warning = FALSE - czy pokazać ostrzeżenia?
+
+## Rysunek
+
+Opcje rysunku zaczynają się od *fig*.
+
+```{r fig.cap='Temperatura wulkanu'}
+image(volcano)
+```
+
+## Fragmenty innych kodów
+
+Dostępne są języki: python, Rcpp, SQL, Stan, Bash i D3. Zazwyczaj trzeba doinstalować pakiety np. do pythona jest `miniconda`. We fragmencie kodu należy ustawić język.
+
+```{python}
+x = 'witamy w świecie python'
+print(x.split(' '))
+```
+
+```{r echo=TRUE}
+x = 'witamy w świecie python'
+gsub(pattern = 'python',x = x,replacement = 'R')
+```
+
+Możliwe jest przechodzenie między dwoma środowiskami. Za pomocą pakietu `reticulate` można tworzyć wirtualną maszynę. Poniższy kod inicjuje pythona z mojego dysku (działa lokalnie).
+
+```{r }
+library(reticulate)
+path <- "C:/Users/wojcikse/AppData/Local/Programs/Python/Python39"
+# use_python(path)
+```
+
+Utwórzmy wektor w pythonie.
+
+```{python}
+my_python_array = list([2,4,6,8])
+```
+
+A teraz w R odwołuje się do środowiska w pythonie poprzez `py`. Konwertuje na wektor i wykonuje pewne operacje.
+
+```{r}
+my_r_array <- py$my_python_array
+my_r_vector <- as.vector(py$my_python_array)
+class(my_r_vector)
+my_r_vector <- my_r_vector * 2
+my_r_vector
+```
+
+Wracam do pythona i odwołuje się do środowiska w R poprzez `r`.
+
+```{python}
+my_python_array2 = r.my_r_vector
+print(my_python_array2)
+```
+
+W środowisku R można wywołać bezpośrednio kod pythona opakowując go komendą `py_run_string` i zamieszczając kod pythona w cudzysłowiu.
+
+```{r}
+reticulate::py_run_string("print(my_python_array2)")
+```
+
+## Tabele
+
+Brzydsza tabela
+
+```{r echo=FALSE}
+mtcars[,1:5]
+```
+
+Tabela z użyciem pakietu `knitr`.
+
+```{r echo=FALSE, results='asis'}
+library(knitr)
+library(dplyr)
+kable(mtcars[,1:5], caption = "Tabela z knitr")
+mtcars %>% knitr::kable(digits = 2)
+```
+
+Inne pakiety do zapisu tabel w R markdown
+
+-   xtable
+-   stargazer
+-   tables
+
+## Składnia LaTex
+
+Można umieszczać kody Latex w dolarach. Pojedyncze dolary $\partial f(x)$ do pisania wzoru wewnątrz akapitu i podwójne do wzoru w nowej linijce.
+
+$$\partial f(x) = \bigcap_{y \in \mathbb{R}} \{x^*:  f(y) \geq f(x) + x^* (y-x)\}$$
+
+## Przykładowa analiza danych
+
+Przeglądnijmy zbiór *iris*.
+
+```{r}
+head(iris) %>% kable()
+```
+
+Zbiór ten zawiera po 50 próbek 3 gatunków kwiatów. Poniższy obrazek przedstawia przykładowe egzemplarze tych trzech gatunków.
+
+```{r irispict, fig.cap="Porównanie gatunków", out.width = '100%'}
+# setwd("C:/R/demo")
+knitr::include_graphics("C:/R/demo/iris.png")
+```
+
+Sprawdźimy czy średnie zmiennej `Sepal.Length` różnią się istotnie między gatunktami. Najpierw obliczymy średnie wartości.
+
+```{r}
+aggregate(Sepal.Length ~ Species,data=iris,mean) %>% kable()
+```
+
+Zapiszmy, który gatunek miał największą średnią.
+
+```{r echo=TRUE}
+tabl=aggregate(Sepal.Length ~ Species,data=iris,mean)
+gatunek=tabl$Species[which.max(tabl$Sepal.Length)] %>% as.character()
+gatunek
+```
+
+Poniższy wykres ramka-wąsy ze względu na nieduży rozrzut wartości wokół średnich pozwala przypuszczać, że średnie różnią się istotnie
+
+```{r}
+boxplot(Sepal.Length ~ Species,data=iris,col=c('red','green','blue'))
+```
+
+Wykonamy test wielu średnich względem zmiennej `Species` wykorzystując funkcję `aov`.
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+Anova=iris %>% aov(Sepal.Length ~ Species,data=.) %>% summary()
+p.val=Anova[[1]][[5]]
+
+Anova
+```
+
+Rzeczywiście, średnie warości zmiennej `Sepal.Length` różnią się istotnie między gatunktami. P-wartość wyniosła w przybliżeniu `r round(p.val[1],6)`, czyli mniej niż 0.05. Gatunek o najwyższej średniej to **`r gatunek`**.
